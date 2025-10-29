@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MaayApp</title>
+
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+</head>
+<body>
+  <div id="app-container">
+    <!-- pantalla de carga -->
+    <div id="splash-screen" class="page">
+      <h1>MaayApp</h1>
+      <p>Aprendiendo nuestras raíces</p>
+    </div>
+
+    <!-- login -->
+    <div id="login-screen" class="page hidden">
+      <div class="app-logo-circle">MaayApp</div>
+      <h2>INICIAR SESIÓN</h2>
+
+      <div class="input-group">
+        <input type="text" placeholder="Usuario o Correo Electrónico" />
+      </div>
+      <div class="input-group">
+        <input type="password" placeholder="Contraseña" />
+      </div>
+
+      <button id="main-login-btn" class="btn btn-primary">INICIAR SESIÓN</button>
+
+      <p class="separator-text">o entra con</p>
+
+      <div class="social-login">
+        <button class="social-btn google" aria-label="Entrar con Google">
+          <i class="fab fa-google"></i>
+        </button>
+        <button class="social-btn apple" aria-label="Entrar con Apple">
+          <i class="fab fa-apple"></i>
+        </button>
+      </div>
+
+      <p class="form-link-text">
+        ¿No tienes cuenta?
+        <span id="go-to-signup-link" class="link">Regístrate aquí</span>
+      </p>
+    </div>
+
+    <!-- crear cuenta -->
+    <div id="signup-screen" class="page hidden">
+      <div class="app-logo-circle">MaayApp</div>
+      <h2>REGISTRO</h2>
+
+      <div class="input-group">
+        <input type="text" placeholder="Nombre de Usuario" />
+      </div>
+      <div class="input-group">
+        <input type="email" placeholder="Correo Electrónico" />
+      </div>
+      <div class="input-group">
+        <input type="password" placeholder="Contraseña" />
+      </div>
+      <div class="input-group">
+        <input type="password" placeholder="Confirmar Contraseña" />
+      </div>
+
+      <button id="main-signup-btn" class="btn btn-primary">REGISTRARSE</button>
+
+      <p class="form-link-text">
+        ¿Ya tienes cuenta?
+        <span id="go-to-login-link" class="link">Inicia sesión</span>
+      </p>
+    </div>
+
+    <!-- completar perfil -->
+    <div id="complete-profile-screen" class="page hidden">
+      <h2>COMPLETA TU INFORMACIÓN</h2>
+
+      <div class="profile-photo-upload">
+        <div class="avatar-placeholder-lg">
+          <i class="fas fa-user"></i>
+        </div>
+        <input type="file" id="upload-photo-complete" accept="image/*" class="hidden" />
+        <label for="upload-photo-complete" class="upload-photo-label">SUBIR FOTO</label>
+      </div>
+
+      <div class="input-group">
+        <input type="text" id="complete-nombres" placeholder="Nombres" />
+      </div>
+      <div class="input-group">
+        <input type="text" id="complete-apellidos" placeholder="Apellidos" />
+      </div>
+
+      <label class="input-label" for="complete-dob">FECHA DE NACIMIENTO</label>
+      <div class="input-group">
+        <input id="complete-dob" type="date" />
+      </div>
+
+      <label class="input-label" for="complete-gender">GÉNERO</label>
+      <div class="input-group">
+        <select id="complete-gender">
+          <option value="">Seleccionar</option>
+          <option value="masculino">Masculino</option>
+          <option value="femenino">Femenino</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+
+      <button id="complete-profile-btn" class="btn btn-primary">Continuar</button>
+    </div>
+
+    <!-- menu perfil -->
+    <div id="profile-menu-screen" class="page hidden">
+      <button class="back-btn" id="back-to-home-from-profile" aria-label="Regresar">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+
+      <div class="profile-header">
+<!-- TARJETA DE PERFIL ACTUALIZADA -->
+<div class="profile-card">
+  <div class="profile-photo-large" id="profile-photo-card"></div>
+  <h3 id="player-name" class="player-name">Nombre Apellido</h3>
+
+  <div class="profile-stats">
+    <div class="stat-item">
+      <i class="fas fa-book"></i>
+      <div>
+        <p class="stat-label">Lección</p>
+        <p id="current-lesson">1</p>
+      </div>
+    </div>
+
+    <div class="stat-item">
+      <i class="fas fa-tasks"></i>
+      <div>
+        <p class="stat-label">Actividad</p>
+        <p id="current-activity">1 / 10</p>
+      </div>
+    </div>
+
+    <div class="stat-item">
+      <i class="fas fa-star"></i>
+      <div>
+        <p class="stat-label">Puntos</p>
+        <p id="player-points">0</p>
+      </div>
+    </div>
+  </div>
+</div>
+      </div>
+    </div>
+
+    <!-- editar perfil -->
+    <div id="edit-profile-screen" class="page hidden">
+      <button class="back-btn" id="back-to-profile-from-edit" aria-label="Regresar">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+
+      <h2>Completa tu información</h2>
+
+      <div class="profile-photo-upload">
+        <div
+          class="profile-avatar-lg"
+          style="background-image: url('https://via.placeholder.com/150/007AB8/FFFFFF?text=PS');"
+        ></div>
+        <input type="file" id="upload-photo-edit" accept="image/*" class="hidden" />
+        <label for="upload-photo-edit" class="upload-photo-label">SUBIR FOTO</label>
+      </div>
+
+      <div class="input-group">
+        <input type="text" placeholder="Nombres" value="Pedrito" />
+      </div>
+      <div class="input-group">
+        <input type="text" placeholder="Apellidos" value="Sola" />
+      </div>
+
+      <label class="input-label">Fecha de nacimiento</label>
+      <div class="input-group">
+        <input id="complete-dob" type="date" />
+      </div>
+
+      <label class="input-label">Género</label>
+      <div class="input-group">
+        <select id="edit-gender">
+          <option value="masculino" selected>Masculino</option>
+          <option value="femenino">Femenino</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+
+      <button id="save-profile-btn" class="btn btn-primary">Guardar</button>
+    </div>
+
+    <!-- pantalla de notificaciones -->
+    <div id="notifications-screen" class="page hidden">
+      <button class="back-btn" id="back-to-profile-from-notifications" aria-label="Regresar">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+
+      <div class="notifications-header">
+        <i class="fas fa-bell"></i>
+        <h2>Notificaciones</h2>
+      </div>
+
+      <div class="notifications-list">
+        <div class="notification-item"><i class="fas fa-bell"></i><p>Nada por el momento</p></div>
+        <div class="notification-item"><i class="fas fa-bell"></i><p>Nada por el momento</p></div>
+        <div class="notification-item"><i class="fas fa-bell"></i><p>Nada por el momento</p></div>
+        <div class="notification-item"><i class="fas fa-bell"></i><p>Nada por el momento</p></div>
+      </div>
+    </div>
+
+    <!-- Puntos -->
+<div id="points-screen" class="page hidden">
+  <button class="back-btn" id="back-to-profile-from-points" aria-label="Regresar">
+    <i class="fas fa-arrow-left"></i>
+  </button>
+
+  <div class="points-header">
+    <i class="fas fa-star"></i>
+    <h2>Tus Puntos</h2>
+  </div>
+
+  <div class="points-summary">
+    <h1 id="points-total">0</h1>
+    <p>¡Sigue aprendiendo para ganar más puntos!</p>
+  </div>
+
+  <div id="points-history" class="points-history">
+    <p>No hay actividades registradas todavía.</p>
+  </div>
+</div>
+
+    <!-- inicio -->
+    <div id="home-screen" class="page hidden">
+      <div class="topbar">
+        <button id="menu-btn" class="icon-btn" aria-label="Abrir menú">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="topbar-title">Lección 1</div>
+        <button id="profile-btn" class="icon-btn" aria-label="Perfil">
+          <i class="fas fa-user-circle"></i>
+        </button>
+      </div>
+
+      <div class="hero">
+        <h1 class="hero-title">¡Bienvenido, Pedrito Sola!</h1>
+        <p class="hero-subtitle">Explora tus lecciones</p>
+      </div>
+
+      <div class="cards-grid">
+        <button id="leccion-1" class="card lesson-card unlocked"><span>Actividad 1</span></button>
+        <button id="leccion-2" class="card lesson-card"><span>Actividad 2</span></button>
+        <button id="leccion-3" class="card lesson-card"><span>Actividad 3</span></button>
+        <button id="leccion-4" class="card lesson-card"><span>Actividad 4</span></button>
+        <button id="leccion-5" class="card lesson-card"><span>Actividad 5</span></button>
+        <button id="leccion-6" class="card lesson-card"><span>Actividad 6</span></button>
+        <button id="leccion-7" class="card lesson-card"><span>Actividad 7</span></button>
+        <button id="leccion-8" class="card lesson-card"><span>Actividad 8</span></button>
+        <button id="leccion-9" class="card lesson-card"><span>Actividad 9</span></button>
+        <button id="leccion-10" class="card lesson-card"><span>Actividad 10</span></button>
+      </div>
+
+      <!-- Navegación inferior -->
+      <div class="lesson-navigation">
+        <button id="prev-lesson" class="nav-circle" title="Lección anterior">⬅️</button>
+        <button id="cloud-search" class="nav-circle main" title="Diccionario">🔎</button>
+        <button id="next-lesson" class="nav-circle" title="Siguiente lección">➡️</button>
+      </div>
+    </div>
+    
+    <div id="home-screen-2" class="page hidden">
+  <div class="topbar">
+    <button id="menu-btn-2" class="icon-btn"><i class="fas fa-bars"></i></button>
+    <div class="topbar-title">Lección 2</div>
+    <button id="profile-btn-2" class="icon-btn"><i class="fas fa-user-circle"></i></button>
+  </div>
+
+  <div class="hero" style="background:linear-gradient(135deg,#34D399,#22C55E);">
+    <h1 class="hero-title">¡Bienvenido, Pedrito Sola!</h1>
+    <p class="hero-subtitle">Continúa tu aprendizaje</p>
+  </div>
+
+  <div class="cards-grid">
+    <button id="leccion2-1" class="card lesson-card unlocked"><span>Actividad 1</span></button>
+    <button id="leccion2-2" class="card lesson-card"><span>Actividad 2</span></button>
+    <button id="leccion2-3" class="card lesson-card"><span>Actividad 3</span></button>
+    <button id="leccion2-4" class="card lesson-card"><span>Actividad 4</span></button>
+    <button id="leccion2-5" class="card lesson-card"><span>Actividad 5</span></button>
+    <button id="leccion2-6" class="card lesson-card"><span>Actividad 6</span></button>
+    <button id="leccion2-7" class="card lesson-card"><span>Actividad 7</span></button>
+    <button id="leccion2-8" class="card lesson-card"><span>Actividad 8</span></button>
+    <button id="leccion2-9" class="card lesson-card"><span>Actividad 9</span></button>
+    <button id="leccion2-10" class="card lesson-card"><span>Actividad 10</span></button>
+  </div>
+
+  <div class="lesson-navigation">
+    <button id="prev-lesson-2" class="nav-circle" title="Lección anterior">⬅️</button>
+    <button id="cloud-search-2" class="nav-circle main" title="Diccionario">🔎</button>
+    <button id="next-lesson-2" class="nav-circle" title="Siguiente lección">➡️</button>
+  </div>
+</div>
+
+    <!-- leccion 1 -->
+    <div id="l1-clave-1" class="page lesson-content-page hidden">
+      <div class="lesson-content">
+        <div class="image-placeholder">[imagen]</div>
+        <h2>Primera Lección: El Apóstrofo (')</h2>
+        <h3>El Sonido "Glotal"</h3>
+        <p>El apóstrofo indica un <strong>corte de aire breve y seco</strong>.</p>
+        <p class="practice-tip"><strong>Cómo practicarlo:</strong> Di "ah" y corta el sonido en la garganta.</p>
+        <p class="example-text"><strong>Ejemplo:</strong> Ma'alob (Bien)</p>
+      </div>
+      <button class="verify-btn" data-next="l1-clave-2">Siguiente</button>
+    </div>
+
+    <div id="l1-clave-2" class="page lesson-content-page hidden">
+      <div class="lesson-content">
+        <div class="image-placeholder">[imagen]</div>
+        <h2>Segunda Lección: La Letra 'X'</h2>
+        <h3>Siempre suena como "SH"</h3>
+        <p>En maya, la 'x' suena como <strong>"sh"</strong> (shampoo).</p>
+        <p class="practice-tip"><strong>Conexión local:</strong> Xcaret, Xel-Há.</p>
+        <p class="example-text"><strong>Ejemplo:</strong> Xux (Avispa) - "shuush"</p>
+      </div>
+      <button class="verify-btn" data-next="l1-clave-3">Siguiente</button>
+    </div>
+
+    <div id="l1-clave-3" class="page lesson-content-page hidden">
+      <div class="lesson-content">
+        <div class="image-placeholder">[imagen]</div>
+        <h2>Tercera Lección: La Letra 'J'</h2>
+        <h3>Fuerte y desde la garganta</h3>
+        <p>La 'j' maya es <strong>más fuerte</strong> y rasposa.</p>
+      </div>
+      <button class="verify-btn" data-next="l1-complete-screen">Terminar Lección</button>
+    </div>
+
+    <div id="l1-complete-screen" class="page hidden">
+      <div class="question-area">
+        <h1>🎉</h1>
+        <h2>¡Lección 1 Completada!</h2>
+        <p>¡Ahora conoces los sonidos clave!</p>
+      </div>
+      <button id="l1-continue-btn" class="btn">Continuar</button>
+    </div>
+
+    <!-- leccio 2 -->
+    <div id="l2-step-1" class="page lesson-page hidden">
+      <div class="question-area">
+        <div class="progress-bar"><div class="progress" style="width:20%;"></div></div>
+        <div class="flashcard">
+          <div class="word-container">
+            <h2>AKAM</h2><div class="audio-icon">🔊</div>
+          </div>
+          <p>Planta parásita</p>
+        </div>
+      </div>
+      <button class="verify-btn" data-next="l2-step-2">Verificar</button>
+    </div>
+
+    <div id="l2-step-2" class="page lesson-page hidden">
+      <div class="question-area">
+        <div class="progress-bar"><div class="progress" style="width:40%;"></div></div>
+        <div class="flashcard">
+          <div class="word-container">
+            <h2>AKKÚUN</h2><div class="audio-icon">🔊</div>
+          </div>
+          <p>Asentar, cimentar</p>
+        </div>
+      </div>
+      <button class="verify-btn" data-next="l2-step-3">Verificar</button>
+    </div>
+
+    <div id="l2-step-3" class="page lesson-page hidden">
+      <div class="question-area">
+        <div class="progress-bar"><div class="progress" style="width:60%;"></div></div>
+        <div class="flashcard">
+          <div class="word-container">
+            <h2>AKLAX</h2><div class="audio-icon">🔊</div>
+          </div>
+          <p>Enano</p>
+        </div>
+      </div>
+      <button class="verify-btn" data-next="l2-step-4">Verificar</button>
+    </div>
+
+    <div id="l2-step-4" class="page lesson-page hidden">
+      <div class="question-area">
+        <div class="progress-bar"><div class="progress" style="width:80%;"></div></div>
+        <div class="flashcard">
+          <div class="word-container">
+            <h2>AKTÁAN</h2><div class="audio-icon">🔊</div>
+          </div>
+          <p>Ante, delante, enfrente</p>
+        </div>
+      </div>
+      <button class="verify-btn" data-next="l2-step-5">Verificar</button>
+    </div>
+
+    <div id="l2-step-5" class="page lesson-page hidden">
+      <div class="question-area">
+        <div class="progress-bar"><div class="progress" style="width:100%;"></div></div>
+        <div class="flashcard">
+          <div class="word-container">
+            <h2>ALAB ÓOL</h2><div class="audio-icon">🔊</div>
+          </div>
+          <p>Confianza; confiar</p>
+        </div>
+      </div>
+      <button class="verify-btn" data-next="l2-complete-screen">Verificar</button>
+    </div>
+
+    <div id="l2-complete-screen" class="page hidden">
+      <div class="question-area">
+        <h1>🎉</h1><h2>¡Lección 2 Completada!</h2>
+      </div>
+      <button id="l2-continue-btn" class="btn">Continuar</button>
+    </div>
+
+    <!-- leccion 3 -->
+    <div id="l3-step-1" class="page lesson-page hidden">
+      <div class="question-area">
+        <div class="progress-bar"><div class="progress" style="width:20%;"></div></div>
+        <div class="flashcard">
+          <div class="word-container">
+            <h2>BAKCHE’</h2><div class="audio-icon">🔊</div>
+          </div>
+          <p>Instrumento para mazorca</p>
+        </div>
+      </div>
+      <button class="verify-btn" data-next="l3-step-2">Verificar</button>
+    </div>
+
+    <div id="l3-step-2" class="page lesson-page hidden">
+      <div class="question-area">
+        <div class="progress-bar"><div class="progress" style="width:40%;"></div></div>
+        <div class="flashcard">
+          <div class="word-container">
+            <h2>BAKNEJ</h2><div class="audio-icon">🔊</div>
+          </div>
+          <p>Insecto en el maíz tierno</p>
+        </div>
+      </div>
+      <button class="verify-btn" data-next="l3-step-3">Verificar</button>
+    </div>
+
+    <div id="l3-step-3" class="page lesson-page hidden">
+      <div class="question-area">
+        <div class="progress-bar"><div class="progress" style="width:60%;"></div></div>
+        <div class="flashcard">
+          <div class="word-container">
+            <h2>BAK’</h2><div class="audio-icon">🔊</div>
+          </div>
+          <p>Carne</p>
+        </div>
+      </div>
+      <button class="verify-btn" data-next="l3-step-4">Verificar</button>
+    </div>
+
+    <div id="l3-step-4" class="page lesson-page hidden">
+      <div class="question-area">
+        <div class="progress-bar"><div class="progress" style="width:80%;"></div></div>
+        <div class="flashcard">
+          <div class="word-container">
+            <h2>BAK’EL IIT</h2><div class="audio-icon">🔊</div>
+          </div>
+          <p>Nalga</p>
+        </div>
+      </div>
+      <button class="verify-btn" data-next="l3-step-5">Verificar</button>
+    </div>
+
+    <div id="l3-step-5" class="page lesson-page hidden">
+      <div class="question-area">
+        <div class="progress-bar"><div class="progress" style="width:100%;"></div></div>
+        <div class="flashcard">
+          <div class="word-container">
+            <h2>BALAK</h2><div class="audio-icon">🔊</div>
+          </div>
+          <p>Rodar</p>
+        </div>
+      </div>
+      <button class="verify-btn" data-next="l3-complete-screen">Verificar</button>
+    </div>
+
+    <div id="l3-complete-screen" class="page hidden">
+      <div class="question-area">
+        <h1>🎉</h1><h2>¡Lección 3 Completada!</h2>
+      </div>
+      <button id="l3-continue-btn" class="btn">Continuar</button>
+    </div>
+
+    <!-- menu lateral -->
+    <div id="side-menu" class="side-menu" aria-label="Menú lateral">
+      <div class="side-menu-header">
+        <div class="side-avatar">👤</div>
+        <h3>Mi Perfil</h3>
+      </div>
+
+      <div class="side-menu-items">
+        <button class="side-link" data-page="edit-profile-screen">
+          <i class="fas fa-user-edit"></i> Editar el Perfil
+        </button>
+        <button class="side-link" data-page="notifications-screen">
+          <i class="fas fa-bell"></i> Notificaciones
+        </button>
+        <button class="side-link">
+          <i class="fas fa-star"></i> Tu Puntuación
+        </button>
+        <button class="side-link">
+          <i class="fas fa-cog"></i> Configuración
+        </button>
+        <button id="logout-btn" class="side-link danger">
+         <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+          </button>
+      </div>
+    </div>
+
+    <!-- Backdrop -->
+    <div id="backdrop" class="backdrop" aria-hidden="true"></div>
+
+    <!-- diccionario-->
+    <div id="dict-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="dict-title">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="dict-title">Diccionario</h3>
+          <button id="dict-close" class="icon-btn" aria-label="Cerrar">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <input id="dictionary-input" type="text" placeholder="Escribe una palabra y presiona Enter…" />
+          <div id="dictionary-result" class="dict-result">
+            Escribe una palabra maya para buscar su significado.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
