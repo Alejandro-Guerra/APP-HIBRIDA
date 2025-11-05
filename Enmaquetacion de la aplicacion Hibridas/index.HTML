@@ -193,23 +193,18 @@
     </div>
 
     <!-- pantalla de notificaciones -->
-    <div id="notifications-screen" class="page hidden">
-      <button class="back-btn" id="back-to-profile-from-notifications" aria-label="Regresar">
-        <i class="fas fa-arrow-left"></i>
-      </button>
+<div id="notifications-screen" class="page hidden">
+  <button class="back-btn" onclick="showPage('profile-menu-screen')">
+    <i class="fa-solid fa-arrow-left"></i>
+  </button>
 
-      <div class="notifications-header">
-        <i class="fas fa-bell"></i>
-        <h2>Notificaciones</h2>
-      </div>
+  <h2 class="notifications-title">
+    <i class="fa-solid fa-bell"></i> Notificaciones
+  </h2>
 
-      <div class="notifications-list">
-        <div class="notification-item"><i class="fas fa-bell"></i><p>Nada por el momento</p></div>
-        <div class="notification-item"><i class="fas fa-bell"></i><p>Nada por el momento</p></div>
-        <div class="notification-item"><i class="fas fa-bell"></i><p>Nada por el momento</p></div>
-        <div class="notification-item"><i class="fas fa-bell"></i><p>Nada por el momento</p></div>
-      </div>
-    </div>
+  <div class="notifications-list"></div>
+</div>
+
 
     <!-- Puntos -->
 <div id="points-screen" class="page hidden">
@@ -226,9 +221,42 @@
     <h1 id="points-total">0</h1>
     <p>¡Sigue aprendiendo para ganar más puntos!</p>
   </div>
+  <div id="ranking-board" class="ranking-board">
+    <h3>🏆 Ranking Global</h3>
+    <ul id="ranking-list"></ul>
+  </div>
+</div>
 
-  <div id="points-history" class="points-history">
-    <p>No hay actividades registradas todavía.</p>
+<!-- CONFIGURACIÓN -->
+<div id="settings-screen" class="page hidden">
+  <button class="back-btn" id="back-to-profile-from-settings" aria-label="Regresar">
+    <i class="fas fa-arrow-left"></i>
+  </button>
+
+  <div class="settings-header">
+    <i class="fas fa-cog"></i>
+    <h2>Configuración</h2>
+  </div>
+
+  <div class="settings-section">
+    <h3>🎨 Apariencia</h3>
+    <div class="toggle-row">
+      <span>Modo oscuro</span>
+      <label class="switch">
+        <input type="checkbox" id="theme-toggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <h3>💡 Brillo</h3>
+    <input type="range" id="brightness-slider" min="50" max="150" value="100">
+  </div>
+
+  <div class="settings-section">
+    <h3>🔊 Volumen</h3>
+    <input type="range" id="volume-slider" min="0" max="100" value="70">
   </div>
 </div>
 
@@ -541,6 +569,7 @@
     </div>
 
   </div>
+  <div id="toast-container"></div>
 
   <script src="script.js"></script>
 </body>

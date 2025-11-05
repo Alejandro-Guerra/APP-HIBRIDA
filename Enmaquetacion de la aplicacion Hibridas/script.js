@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (page) page.classList.remove('hidden');
   };
 
-  // Persistencia básica de perfil 
   function saveProfile(profile) {
     localStorage.setItem('userProfile', JSON.stringify(profile));
   }
@@ -38,18 +37,14 @@ document.addEventListener('DOMContentLoaded', () => {
     return JSON.parse(localStorage.getItem('userProfile') || '{}');
   }
 
-  // Actualiza “Bienvenido, …” y el nombre del perfil
   function updateWelcomeAndProfileName() {
     const p = getProfile();
     const name = (p.nombres ? `${p.nombres} ${p.apellidos || ''}` : 'Invitado').trim();
-    // Títulos de bienvenida en ambas lecciones
     document.querySelectorAll('.hero-title').forEach(el => {
       el.textContent = `¡Bienvenido, ${name}!`;
     });
-    // Encabezado de la pantalla de perfil
     const profileTitle = document.getElementById('profile-user-name');
     if (profileTitle) profileTitle.textContent = name;
-    // Avatares si hay foto
     if (p.foto) {
       document.querySelectorAll('.profile-avatar, .profile-avatar-lg').forEach(el => {
         el.style.backgroundImage = `url('${p.foto}')`;
@@ -57,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Splash: si ya hay perfil con nombre, manda a home; si no, al login
   showPage('splash-screen');
   setTimeout(() => {
     const p = getProfile();
@@ -132,7 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
   handlePhotoUpload('upload-photo-complete');
   handlePhotoUpload('upload-photo-edit');
 
-  // Navegación a/desde pantallas de perfil
   document.getElementById('profile-btn')
     ?.addEventListener('click', () => showPage('profile-menu-screen'));
   document.getElementById('back-to-home-from-profile')
@@ -169,7 +162,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Mapa actual (el tuyo) para abrir algunas actividades
   const lecciones = {
     'leccion-1': { startPage: 'l1-clave-1', continueBtn: 'l1-continue-btn', unlock: 'leccion-2' },
     'leccion-2': { startPage: 'l2-step-1',  continueBtn: 'l2-continue-btn', unlock: 'leccion-3' },
@@ -193,14 +185,12 @@ document.addEventListener('DOMContentLoaded', () => {
         node.classList.add('completed');
         const unlockNode = document.getElementById(data.unlock);
         if (unlockNode) unlockNode.classList.add('unlocked');
-        alert('🎉 ¡Lección completada!');
-        // Regresa a la lección 1 por defecto (donde están esas actividades)
+        alert('¡Lección completada!');
         showPage('home-screen');
       });
     }
   }
 
-  // Actividades que aún no están mapeadas (lección 1)
   for (let i = 4; i <= 10; i++) {
     const lesson = document.getElementById(`leccion-${i}`);
     if (lesson) {
@@ -208,7 +198,6 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('¡Estamos preparando nuevo contenido para ti!'));
     }
   }
-  // Actividades que aún no están mapeadas (lección 2)
   for (let i = 1; i <= 10; i++) {
     const lesson = document.getElementById(`leccion2-${i}`);
     if (lesson && !lesson.hasListenerAttached) {
@@ -273,7 +262,6 @@ document.addEventListener('DOMContentLoaded', () => {
     dictInput.select();
   });
 
-  // Refresca nombres si ya existía perfil
   updateWelcomeAndProfileName();
 });
 document.addEventListener('DOMContentLoaded', () => {
@@ -295,7 +283,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const profileName = document.getElementById('profile-user-name');
     if (profileName) profileName.textContent = name;
-    // Foto de perfil
     if (p.foto) {
       document.querySelectorAll('.profile-avatar, .profile-avatar-lg').forEach(el => {
         el.style.backgroundImage = `url('${p.foto}')`;
@@ -311,7 +298,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('edit-dob').value = p.fecha || '';
   }
 
-  // Splash inicial
   showPage('splash-screen');
   setTimeout(() => {
     const p = getProfile();
@@ -361,7 +347,6 @@ document.addEventListener('DOMContentLoaded', () => {
       showPage('edit-profile-screen');
     });
 
-  // Guardar cambios desde pantalla de edición
   document.getElementById('save-profile-btn')
     ?.addEventListener('click', () => {
       const nombres = document.querySelector('#edit-profile-screen input[placeholder="Nombres"]').value.trim();
@@ -375,7 +360,6 @@ document.addEventListener('DOMContentLoaded', () => {
       showPage('profile-menu-screen');
     });
 
-  // Subida de foto
   function handlePhotoUpload(inputId) {
     const fileInput = document.getElementById(inputId);
     if (!fileInput) return;
@@ -450,19 +434,104 @@ document.addEventListener('DOMContentLoaded', () => {
   alert('Sesión cerrada correctamente.');
 });
 
-//puntos
+//puntos 
 
-if (!localStorage.getItem('userPoints')) {
-  localStorage.setItem('userPoints', JSON.stringify({ total: 0, history: [] }));
+function getPoints() {
+  return JSON.parse(localStorage.getItem('userPoints') || '{"total":0,"history":[]}');
+}
+function getRankingData() {
+  return JSON.parse(localStorage.getItem('globalRanking') || '[]');
+}
+function saveRankingData(data) {
+  localStorage.setItem('globalRanking', JSON.stringify(data));
+}
+function updateRanking(profile, points) {
+  if (!profile?.nombres) return;
+  const data = getRankingData();
+  const name = `${profile.nombres.split(' ')[0]} ${profile.apellidos?.split(' ')[0] || ''}`.trim();
+
+  const existing = data.find(p => p.name === name);
+  if (existing) {
+    existing.points = points.total;
+  } else {
+    data.push({ name, points: points.total });
+  }
+
+  data.sort((a, b) => b.points - a.points);
+  saveRankingData(data);
 }
 
-function addPoints(amount, reason) {
-  const points = JSON.parse(localStorage.getItem('userPoints') || '{"total":0,"history":[]}');
-  points.total += amount;
+// ranking
+function renderRanking() {
+  const rankingList = document.getElementById('ranking-list');
+  const profile = getProfile();
+  const playerName = `${profile.nombres?.split(' ')[0] || 'Usuario'} ${profile.apellidos?.split(' ')[0] || ''}`.trim();
+  const data = getRankingData();
+
+  if (!rankingList) return;
+  if (data.length === 0) {
+    rankingList.innerHTML = '<li>No hay jugadores registrados aún.</li>';
+    return;
+  }
+
+  rankingList.innerHTML = data
+    .map((p, i) => `
+      <li class="${p.name === playerName ? 'you' : ''}">
+        <strong>${i + 1}.</strong> ${p.name} — ${p.points} pts
+      </li>
+    `)
+    .join('');
+}
+
+function updatePointsUI() {
+  const { total } = getPoints();
+  const totalEl = document.getElementById('points-total');
+  if (totalEl) totalEl.textContent = total;
+
+  const profile = getProfile();
+  updateRanking(profile, { total });
+  renderRanking();
+}
+
+document.querySelector('.side-link i.fa-star')
+  ?.closest('.side-link')
+  ?.addEventListener('click', () => {
+    updatePointsUI();
+    showPage('points-screen');
+  });
+
+document.getElementById('back-to-profile-from-points')
+  ?.addEventListener('click', () => showPage('profile-menu-screen'));
+
+function addNotification(message) {
+  const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
   const date = new Date().toLocaleString();
-  points.history.unshift({ reason, amount, date });
-  localStorage.setItem('userPoints', JSON.stringify(points));
+  notifications.unshift({ message, date });
+  localStorage.setItem('notifications', JSON.stringify(notifications));
+  updateNotificationsUI();
 }
+
+function updateNotificationsUI() {
+  const container = document.querySelector('#notifications-screen .notifications-list');
+  const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+
+  if (!container) return;
+  if (notifications.length === 0) {
+    container.innerHTML = '<div class="notification-item"><i class="fas fa-bell"></i><p>Nada por el momento</p></div>';
+  } else {
+    container.innerHTML = notifications.map(n =>
+      `<div class="notification-item">
+         <i class="fas fa-bell"></i>
+         <div>
+           <p>${n.message}</p>
+           <small>${n.date}</small>
+         </div>
+       </div>`
+    ).join('');
+  }
+}
+
+updateNotificationsUI();
 
 function getPoints() {
   return JSON.parse(localStorage.getItem('userPoints') || '{"total":0,"history":[]}');
@@ -500,21 +569,16 @@ document.querySelector('.side-link i.fa-star')
     updatePointsUI();
     showPage('points-screen');
   });
-// tarjeta de ussuario
-/* ==========================
-   TARJETA DE PERFIL ACTUALIZADA
-========================== */
+
 function updateProfileCard() {
   const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
   const points = JSON.parse(localStorage.getItem('userPoints') || '{"total":0}');
   const progress = JSON.parse(localStorage.getItem('lessonProgress') || '{"completed":[],"unlocked":[]}');
 
-  // Nombre abreviado (primer nombre + primer apellido)
   const firstName = (profile.nombres || '').split(' ')[0] || 'Usuario';
   const firstLast = (profile.apellidos || '').split(' ')[0] || '';
   const nameDisplay = `${firstName} ${firstLast}`.trim();
 
-  // Foto de perfil (si hay)
   const photoCard = document.getElementById('profile-photo-card');
   if (photoCard) {
     if (profile.foto) {
@@ -524,15 +588,12 @@ function updateProfileCard() {
     }
   }
 
-  // Actualiza el nombre
   const nameEl = document.getElementById('player-name');
   if (nameEl) nameEl.textContent = nameDisplay;
 
-  // Puntos totales
   const pointsEl = document.getElementById('player-points');
   if (pointsEl) pointsEl.textContent = points.total || 0;
 
-  // Lección actual (la última completada o desbloqueada)
   const currentLesson = progress.completed?.length
     ? progress.completed.length
     : progress.unlocked?.length
@@ -541,16 +602,74 @@ function updateProfileCard() {
   const lessonEl = document.getElementById('current-lesson');
   if (lessonEl) lessonEl.textContent = currentLesson;
 
-  // Actividad actual (simulada)
   const currentActivity = Math.min((points.total / 10) % 10 || 1, 10);
   const activityEl = document.getElementById('current-activity');
   if (activityEl) activityEl.textContent = `${Math.floor(currentActivity)} / 10`;
 }
 
-// Ejecutar al cargar la página
+function getLessonProgress() {
+  return JSON.parse(localStorage.getItem('lessonProgress') || '{"completed":[],"unlocked":["leccion-1"]}');
+}
+
+function saveLessonProgress(data) {
+  localStorage.setItem('lessonProgress', JSON.stringify(data));
+}
+
+function markLessonCompleted(id) {
+  const progress = getLessonProgress();
+  if (!progress.completed.includes(id)) {
+    progress.completed.push(id);
+  }
+  const match = id.match(/leccion-(\d+)/);
+  if (match) {
+    const nextId = `leccion-${parseInt(match[1]) + 1}`;
+    if (!progress.unlocked.includes(nextId)) {
+      progress.unlocked.push(nextId);
+    }
+  }
+  saveLessonProgress(progress);
+  updateLessonUI();
+}
+
+function updateLessonUI() {
+  const progress = getLessonProgress();
+  document.querySelectorAll('.lesson-card').forEach(card => {
+    const id = card.id;
+    card.classList.remove('unlocked', 'completed');
+    if (progress.completed.includes(id)) card.classList.add('completed');
+    else if (progress.unlocked.includes(id)) card.classList.add('unlocked');
+  });
+}
+
+updateLessonUI();
+
+function showToast(message, type = "info") {
+  const container = document.getElementById("toast-container");
+  if (!container) return;
+
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+
+  const icons = {
+    success: "fa-solid fa-circle-check",
+    error: "fa-solid fa-triangle-exclamation",
+    info: "fa-solid fa-circle-info",
+    warning: "fa-solid fa-exclamation-circle"
+  };
+
+  toast.innerHTML = `<i class="${icons[type] || icons.info}"></i> <span>${message}</span>`;
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.remove();
+  }, 4000);
+}
+
+showToast("¡Bienvenido a MaayApp!", "success");
+
+
 updateProfileCard();
 
-// Actualizar también cada vez que se guarde el perfil o se ganen puntos
 document.addEventListener('pointsUpdated', updateProfileCard);
 document.addEventListener('lessonUpdated', updateProfileCard);
 
@@ -558,6 +677,153 @@ document.getElementById('back-to-profile-from-points')
   ?.addEventListener('click', () => showPage('profile-menu-screen'));
 
 
+  function updateNotificationsUI() {
+  const container = document.querySelector('#notifications-screen .notifications-list');
+  const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+  if (!container) return;
+
+  if (notifications.length === 0) {
+    container.innerHTML = `
+      <div class="notification-item" style="opacity:0.8;">
+        <i class="fa-solid fa-bell-slash"></i>
+        <div class="notification-content">
+          <p>No tienes notificaciones por ahora.</p>
+          <small>Vuelve después de realizar actividades.</small>
+        </div>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = notifications.map(n => `
+    <div class="notification-item">
+      <i class="fa-solid fa-bell"></i>
+      <div class="notification-content">
+        <p>${n.message}</p>
+        <small>${n.date}</small>
+      </div>
+    </div>
+  `).join('');
+}
+
+
+
+
   updateUIFromProfile();
+
+function getRankingData() {
+  return JSON.parse(localStorage.getItem('globalRanking') || '[]');
+}
+function saveRankingData(data) {
+  localStorage.setItem('globalRanking', JSON.stringify(data));
+}
+
+function updateRanking(profile, points) {
+  if (!profile?.nombres) return;
+  const data = getRankingData();
+  const name = `${profile.nombres.split(' ')[0]} ${profile.apellidos?.split(' ')[0] || ''}`.trim();
+
+  const existing = data.find(p => p.name === name);
+  if (existing) {
+    existing.points = points.total;
+  } else {
+    data.push({ name, points: points.total });
+  }
+
+  data.sort((a, b) => b.points - a.points);
+  saveRankingData(data);
+}
+
+function renderRanking() {
+  const rankingList = document.getElementById('ranking-list');
+  const profile = getProfile();
+  const data = getRankingData();
+  const playerName = `${profile.nombres?.split(' ')[0] || 'Usuario'} ${profile.apellidos?.split(' ')[0] || ''}`.trim();
+
+  if (data.length === 0) {
+    rankingList.innerHTML = '<li>No hay jugadores registrados.</li>';
+    return;
+  }
+
+  rankingList.innerHTML = data
+    .map((p, i) => `
+      <li class="${p.name === playerName ? 'you' : ''}">
+        <strong>${i + 1}.</strong> ${p.name} — ${p.points} pts
+      </li>
+    `)
+    .join('');
+}
+
+function showRankingBoard() {
+  const board = document.getElementById('ranking-board');
+  const pages = document.querySelectorAll('.page');
+  pages.forEach(p => p.classList.add('hidden'));
+  renderRanking();
+  board.classList.remove('hidden');
+}
+
+function refreshRanking() {
+  const profile = getProfile();
+  const points = getPoints();
+  updateRanking(profile, points);
+}
+
+document.addEventListener('pointsUpdated', refreshRanking);
+document.addEventListener('lessonUpdated', refreshRanking);
+
+refreshRanking();
+
+document.querySelector('.side-link i.fa-cog')
+  ?.closest('.side-link')
+  ?.addEventListener('click', () => {
+    showPage('settings-screen');
+  });
+
+document.getElementById('back-to-profile-from-settings')
+  ?.addEventListener('click', () => showPage('profile-menu-screen'));
+
+const themeToggle = document.getElementById('theme-toggle');
+const body = document.body;
+
+function applyTheme(isDark) {
+  if (isDark) {
+    body.classList.add('dark-mode');
+    localStorage.setItem('theme', 'dark');
+  } else {
+    body.classList.remove('dark-mode');
+    localStorage.setItem('theme', 'light');
+  }
+}
+
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark') {
+  themeToggle.checked = true;
+  applyTheme(true);
+}
+
+themeToggle?.addEventListener('change', () => {
+  applyTheme(themeToggle.checked);
+});
+
+const brightnessSlider = document.getElementById('brightness-slider');
+brightnessSlider?.addEventListener('input', () => {
+  const value = brightnessSlider.value;
+  document.documentElement.style.filter = `brightness(${value}%)`;
+  localStorage.setItem('brightness', value);
+});
+
+const savedBrightness = localStorage.getItem('brightness');
+if (savedBrightness) {
+  document.documentElement.style.filter = `brightness(${savedBrightness}%)`;
+  brightnessSlider.value = savedBrightness;
+}
+
+const volumeSlider = document.getElementById('volume-slider');
+volumeSlider?.addEventListener('input', () => {
+  const vol = volumeSlider.value;
+  localStorage.setItem('volume', vol);
+  console.log(`🔊 Volumen ajustado a: ${vol}%`);
+});
+
+
 });
 
